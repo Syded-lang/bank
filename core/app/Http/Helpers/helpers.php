@@ -214,10 +214,14 @@ function getPageSections($arr = false)
 
 function getImage($image, $size = null, $avatar = false)
 {
+    // Cache busting: append file modification time to prevent browser caching
     $clean = '';
     // Check if file exists using public_path for proper file system check
     $imagePath = public_path($image);
     if (file_exists($imagePath) && is_file($imagePath)) {
+        // Add cache busting query parameter using file modification time
+        $timestamp = filemtime($imagePath);
+        $clean = '?v=' . $timestamp;
         return asset($image) . $clean;
     }
     if ($size) {
