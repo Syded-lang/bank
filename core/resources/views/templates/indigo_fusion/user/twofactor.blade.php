@@ -5,8 +5,8 @@
         <div class="col-md-12">
             <div class="card custom--card">
                 <div class="card-body">
-                    <h5 class="card-title mb-3">@lang('Two-Factor Authentication Method')</h5>
-                    <p class="mb-3">@lang('Choose your preferred method for two-factor authentication. You can switch between methods at any time.')</p>
+                    <h5 class="card-title mb-3">@lang('Two-Factor Authentication Settings')</h5>
+                    <p class="mb-3">@lang('Choose your preferred method for two-factor authentication when making transfers and important actions.')</p>
                     
                     <form action="{{ route('user.twofactor.method.update') }}" method="POST">
                         @csrf
@@ -15,12 +15,14 @@
                                 <div class="form-group">
                                     <label class="form-label">@lang('Preferred 2FA Method')</label>
                                     <select name="preferred_2fa_method" class="form--control" required>
-                                        <option value="google" @selected(auth()->user()->preferred_2fa_method == 'google')>
-                                            @lang('Google Authenticator')
-                                        </option>
                                         @if (gs()->modules->otp_email)
-                                            <option value="email" @selected(auth()->user()->preferred_2fa_method == 'email')>
-                                                @lang('Email OTP')
+                                            <option value="email" @selected(auth()->user()->preferred_2fa_method == 'email' || !auth()->user()->preferred_2fa_method)>
+                                                @lang('Email OTP (Recommended)')
+                                            </option>
+                                        @endif
+                                        @if (auth()->user()->ts)
+                                            <option value="google" @selected(auth()->user()->preferred_2fa_method == 'google')>
+                                                @lang('Google Authenticator')
                                             </option>
                                         @endif
                                         @if (gs()->modules->otp_sms)
@@ -29,13 +31,13 @@
                                             </option>
                                         @endif
                                     </select>
-                                    <small class="text-muted">
+                                    <small class="text-muted d-block mt-2">
                                         @if (auth()->user()->preferred_2fa_method == 'google')
                                             <i class="las la-check-circle text-success"></i> @lang('Currently using: Google Authenticator')
-                                        @elseif (auth()->user()->preferred_2fa_method == 'email')
-                                            <i class="las la-check-circle text-success"></i> @lang('Currently using: Email OTP')
                                         @elseif (auth()->user()->preferred_2fa_method == 'sms')
                                             <i class="las la-check-circle text-success"></i> @lang('Currently using: SMS OTP')
+                                        @else
+                                            <i class="las la-check-circle text-success"></i> @lang('Currently using: Email OTP')
                                         @endif
                                     </small>
                                 </div>
@@ -48,8 +50,14 @@
                     
                     <div class="alert alert-info mt-3" role="alert">
                         <i class="las la-info-circle"></i>
-                        <strong>@lang('Note:')</strong> 
-                        @lang('To use Google Authenticator, you must first enable it in the section below. Email and SMS OTP work automatically.')
+                        <strong>@lang('How it works:')</strong> 
+                        <ul class="mb-0 mt-2">
+                            <li><strong>@lang('Email OTP:')</strong> @lang('Verification codes sent to your email address. Works automatically.')</li>
+                            @if (gs()->modules->otp_sms)
+                                <li><strong>@lang('SMS OTP:')</strong> @lang('Verification codes sent to your phone via SMS. Works automatically.')</li>
+                            @endif
+                            <li><strong>@lang('Google Authenticator:')</strong> @lang('Time-based codes from the Google Authenticator app. Must be enabled below first.')</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -60,7 +68,7 @@
                 <div class="card custom--card">
 
                     <div class="card-body">
-                        <h5 class="card-title text-center">@lang('Add Your Account')</h5>
+                        <h5 class="card-title text-center">@lang('Setup Google Authenticator')</h5>
                         <p class="my-3 mb-3">
                             @lang('Use the QR code or setup key on your Google Authenticator app to add your account.')
                         </p>

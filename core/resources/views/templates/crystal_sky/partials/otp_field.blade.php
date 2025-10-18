@@ -1,20 +1,25 @@
 @if (checkIsOtpEnable())
-    <div class="form-group mt-0">
-        <label for="verification" class="form-label">@lang('Authorization Mode')</label>
-        <select name="auth_mode" id="verification" class="form--control select" required>
-            <option disabled value="">@lang('Select One')</option>
-            @if (auth()->user()->ts)
-                <option value="2fa" @selected(auth()->user()->preferred_2fa_method == 'google')>@lang('Google Authenticator')</option>
-            @endif
-            @if (gs()->modules->otp_email)
-                <option value="email" @selected(auth()->user()->preferred_2fa_method == 'email')>@lang('Email')</option>
-            @endif
-            @if (gs()->modules->otp_sms)
-                <option value="sms" @selected(auth()->user()->preferred_2fa_method == 'sms')>@lang('SMS')</option>
-            @endif
-        </select>
-        <small class="text-muted">
-            <i class="las la-info-circle"></i> @lang('Your preferred method is pre-selected. You can change it in 2FA Settings.')
-        </small>
+    {{-- Auto-set auth_mode based on user preference, default to email --}}
+    @php
+        $authMode = 'email'; // Default to email
+        if (auth()->user()->ts && auth()->user()->preferred_2fa_method == 'google') {
+            $authMode = '2fa';
+        } elseif (auth()->user()->preferred_2fa_method == 'sms' && gs()->modules->otp_sms) {
+            $authMode = 'sms';
+        }
+    @endphp
+    <input type="hidden" name="auth_mode" value="{{ $authMode }}">
+    
+    <div class="alert alert-info">
+        <i class="las la-shield-alt"></i>
+        @if ($authMode == '2fa')
+            @lang('Verification code will be sent via Google Authenticator')
+        @elseif ($authMode == 'sms')
+            @lang('Verification code will be sent via SMS')
+        @else
+            @lang('Verification code will be sent to your email')
+        @endif
+        <br>
+        <small class="text-muted">@lang('You can change your preferred method in 2FA Settings')</small>
     </div>
 @endif
