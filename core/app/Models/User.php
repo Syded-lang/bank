@@ -182,7 +182,7 @@ class User extends Authenticatable
 
     public function verifications()
     {
-        return $this->morphMany(OtpVerification::class, 'parent', 'parent_type', 'user_id');
+        return $this->morphMany(OtpVerification::class, 'verifiable');
     }
 
 }
