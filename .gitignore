@@ -1,0 +1,35 @@
+# Ignore macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore temp/backup files
+*.bak
+*.backup
+*.tmp
+*.log
+
+# Ignore sensitive files
+core/.env
+*.pem
+*.key
+
+# Ignore cleanup/documentation files
+CLEANUP_SUMMARY.txt
+*_FIX.txt
+*_GUIDE.txt
+*_CHECKLIST.txt
+*_SUMMARY.txt
+test-db.php
+
+# Ignore build/package files
+*.zip
+*.tar.gz
+create-production-package.sh

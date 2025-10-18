@@ -1,0 +1,44 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Serve assets directly from core/public
+    RewriteRule ^assets/(.*)$ core/public/assets/$1 [L,QSA]
+    
+    # Serve install files from core/public
+    RewriteRule ^install/(.*)$ core/public/install/$1 [L,QSA]
+    
+    # Serve other static files
+    RewriteRule ^(robots\.txt|favicon\.ico|.*\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico|pdf))$ core/public/$1 [L,QSA]
+    
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    
+    # Send all other requests to root index.php
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+# Add MIME types for assets
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType text/javascript .js
+    AddType application/javascript .js
+    AddType image/svg+xml .svg
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+    AddType font/ttf .ttf
+    AddType font/eot .eot
+</IfModule>
+
+# Protect sensitive files
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
