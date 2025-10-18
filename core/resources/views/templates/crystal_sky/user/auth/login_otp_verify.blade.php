@@ -47,14 +47,6 @@
                                     </button>
                                 </div>
 
-                                @if ($authMode != '2fa')
-                                <div class="form-group mb-3 text-center">
-                                    <a href="#" class="text--base" id="resend-otp">
-                                        <i class="las la-redo-alt"></i> @lang('Resend OTP Code')
-                                    </a>
-                                </div>
-                                @endif
-
                                 <div class="form-group mb-0 text-center">
                                     <a href="{{ route('user.login') }}" class="text-muted small">
                                         <i class="las la-arrow-left"></i> @lang('Cancel & Return to Login')
@@ -168,56 +160,6 @@
                 for (var i = 0; i < this.value.length; i++) {
                     $('.boxes span').eq(i).text('●');
                 }
-            });
-            
-            // Resend OTP handler
-            $('#resend-otp').on('click', function(e) {
-                e.preventDefault();
-                
-                var $this = $(this);
-                var originalText = $this.html();
-                
-                $this.html('<i class="las la-spinner fa-spin"></i> @lang("Sending...")');
-                
-                $.ajax({
-                    url: "{{ route('user.login.otp.resend') ?? '#' }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            iziToast.success({
-                                message: response.message || '@lang("OTP code sent successfully!")',
-                                position: "topRight"
-                            });
-                            
-                            // Countdown timer
-                            var countdown = 60;
-                            var interval = setInterval(function() {
-                                countdown--;
-                                $this.html('<i class="las la-clock"></i> @lang("Resend in ") ' + countdown + 's');
-                                if (countdown <= 0) {
-                                    clearInterval(interval);
-                                    $this.html(originalText);
-                                }
-                            }, 1000);
-                        } else {
-                            iziToast.error({
-                                message: response.message || '@lang("Failed to send OTP. Please try again.")',
-                                position: "topRight"
-                            });
-                            $this.html(originalText);
-                        }
-                    },
-                    error: function() {
-                        iziToast.error({
-                            message: '@lang("An error occurred. Please try again.")',
-                            position: "topRight"
-                        });
-                        $this.html(originalText);
-                    }
-                });
             });
             
             // Only allow numbers
