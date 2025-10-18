@@ -87,30 +87,42 @@
         
         .verification-code input {
             font-size: 24px;
-            letter-spacing: 10px;
+            letter-spacing: 42px;
             text-align: center;
             font-weight: 600;
             padding: 15px;
+            color: transparent;
+            caret-color: #2b388f;
+            text-shadow: 0 0 0 transparent;
+        }
+        
+        .verification-code input::selection {
+            background: transparent;
         }
         
         .boxes {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
+            gap: 10px;
             pointer-events: none;
             position: absolute;
-            top: 0;
+            top: 50%;
             left: 0;
             right: 0;
-            bottom: 0;
-            padding: 15px 20px;
+            transform: translateY(-50%);
+            padding: 0 20px;
         }
         
         .boxes span {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             color: #2b388f;
-            flex: 1;
-            text-align: center;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 3px solid #2b388f;
         }
         
         #resend-otp {
