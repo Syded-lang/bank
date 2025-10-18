@@ -33,3 +33,4 @@ test-db.php
 *.zip
 *.tar.gz
 create-production-package.sh
+install/database.sql
