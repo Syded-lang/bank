@@ -105,9 +105,11 @@ class LoginController extends Controller
 
     public function authenticated(Request $request, $user)
     {
-        // Check if OTP modules are enabled for login verification
-        // Toggle this in Admin > Settings > System Configuration > OTP Via Email/SMS
-        if (checkIsOtpEnable()) {
+        // Check ONLY if login OTP modules are enabled (separate from transaction OTP)
+        // This allows you to disable login OTP while keeping transaction OTP active
+        $loginOtpEnabled = gs('modules')->otp_email || gs('modules')->otp_sms;
+        
+        if ($loginOtpEnabled) {
             // Store user login data in session for later
             session(['pending_login_user_id' => $user->id]);
             
@@ -137,7 +139,7 @@ class LoginController extends Controller
             }
         }
         
-        // If OTP is disabled, proceed with normal login
+        // If login OTP is disabled, proceed with normal login
         $user->tv = $user->ts == Status::VERIFIED ? Status::UNVERIFIED : Status::VERIFIED;
         $user->save();
         
