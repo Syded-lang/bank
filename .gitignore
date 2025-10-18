@@ -20,6 +20,8 @@
 core/.env
 *.pem
 *.key
+**/database.sql
+**/database.sql.*
 
 # Ignore cleanup/documentation files
 CLEANUP_SUMMARY.txt
@@ -33,4 +35,3 @@ test-db.php
 *.zip
 *.tar.gz
 create-production-package.sh
-install/database.sql
