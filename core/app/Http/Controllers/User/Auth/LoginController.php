@@ -105,7 +105,39 @@ class LoginController extends Controller
 
     public function authenticated(Request $request, $user)
     {
-        // Skip login OTP - go directly to user verification and login
+        // Check if OTP modules are enabled for login verification
+        // Toggle this in Admin > Settings > System Configuration > OTP Via Email/SMS
+        if (checkIsOtpEnable()) {
+            // Store user login data in session for later
+            session(['pending_login_user_id' => $user->id]);
+            
+            // Logout the user temporarily until OTP is verified
+            $this->guard()->logout();
+            
+            // Automatically send email OTP without asking user to select
+            $authMode = 'email';  // Default to email
+            $otpManager = new \App\Lib\OTPManager();
+            $additionalData = ['after_verified' => 'user.login.otp.complete'];
+            
+            try {
+                $otpManager->newOTP(
+                    $user,
+                    $authMode,
+                    'LOGIN_OTP',
+                    $additionalData
+                );
+                
+                session(['login_auth_mode' => $authMode]);
+                
+                $notify[] = ['success', 'OTP sent to your email successfully'];
+                return to_route('user.login.otp.verify')->withNotify($notify);
+            } catch (\Exception $e) {
+                $notify[] = ['error', $e->getMessage()];
+                return to_route('user.login')->withNotify($notify);
+            }
+        }
+        
+        // If OTP is disabled, proceed with normal login
         $user->tv = $user->ts == Status::VERIFIED ? Status::UNVERIFIED : Status::VERIFIED;
         $user->save();
         
