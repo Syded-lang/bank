@@ -68,7 +68,16 @@ if ($action == 'requirements') {
 	}
 	$dirs = ['../../bootstrap/cache/', '../../storage/', '../../storage/app/', '../../storage/framework/', '../../storage/logs/'];
 	foreach ($dirs as $dir) {
-		$perm = substr(sprintf('%o', fileperms($dir)), -4);
+		if (!file_exists($dir)) {
+			$failed[] = str_replace("../../", "core/", $dir) . ' directory not found';
+			continue;
+		}
+		$permResult = @fileperms($dir);
+		if ($permResult === false) {
+			$failed[] = str_replace("../../", "core/", $dir) . ' permission check failed';
+			continue;
+		}
+		$perm = substr(sprintf('%o', $permResult), -4);
 		// Fixed: Convert to integer for proper numeric comparison
 		$permInt = intval($perm, 8); // Convert octal string to integer
 		$requiredPerm = intval('0775', 8);
