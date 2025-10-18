@@ -142,7 +142,7 @@ class OTPManager
         if ($this->sendVia != '2fa') {
             $verification = $this->verification;
             $shortCodes   = ['otp' => $this->verification->otp];
-            notify($verification->user, $verification->notify_template, $shortCodes, [$verification->send_via], false);
+            notify($this->parent, $verification->notify_template, $shortCodes, [$verification->send_via], false);
         }
     }
 
