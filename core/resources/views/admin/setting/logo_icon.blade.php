@@ -1,4 +1,11 @@
 @extends('admin.layouts.app')
+
+@push('style')
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+@endpush
+
 @section('panel')
     <div class="row mb-none-30">
         <div class="col-md-12 mb-30">
