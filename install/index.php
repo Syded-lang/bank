@@ -94,18 +94,8 @@ if ($_POST['db_type'] == 'create-new-database') {
 }
 
 if ($action == 'result') {
-	$url = 'https://license.viserlab.com/install';
-	$params = $_POST;
-	$params['product'] = $itemName;
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
-	curl_close($ch);
-	//$response = json_decode($result, true);
-	$response = array('error' => 'ok', 'message' => 'Valid license!');
+	// License verification permanently bypassed - No external calls
+	$response = array('error' => 'ok', 'message' => 'License verification bypassed - Installation authorized!');
 	
 	if (@$response['error'] == 'ok' && $_POST['db_type'] == 'create-new-database') {
 		try {
