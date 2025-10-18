@@ -66,16 +66,16 @@ if ($action == 'requirements') {
 	} else {
 		$failed[] = 'allow_url_fopen() is required';
 	}
-	$dirs = ['../core/bootstrap/cache/', '../core/storage/', '../core/storage/app/', '../core/storage/framework/', '../core/storage/logs/'];
+	$dirs = ['../../bootstrap/cache/', '../../storage/', '../../storage/app/', '../../storage/framework/', '../../storage/logs/'];
 	foreach ($dirs as $dir) {
 		$perm = substr(sprintf('%o', fileperms($dir)), -4);
 		// Fixed: Convert to integer for proper numeric comparison
 		$permInt = intval($perm, 8); // Convert octal string to integer
 		$requiredPerm = intval('0775', 8);
 		if ($permInt >= $requiredPerm || is_writable($dir)) {
-			$passed[] = str_replace("../", "", $dir) . ' is required 0775 permission';
+			$passed[] = str_replace("../../", "core/", $dir) . ' is required 0775 permission';
 		} else {
-			$failed[] = str_replace("../", "", $dir) . ' is required 0775 permission. Current Permisiion is ' . $perm;
+			$failed[] = str_replace("../../", "core/", $dir) . ' is required 0775 permission. Current Permisiion is ' . $perm;
 		}
 	}
 	if (file_exists('database.sql')) {
