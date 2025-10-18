@@ -105,38 +105,7 @@ class LoginController extends Controller
 
     public function authenticated(Request $request, $user)
     {
-        // Check if login OTP is enabled
-        if (checkIsOtpEnable()) {
-            // Store user login data in session for later
-            session(['pending_login_user_id' => $user->id]);
-            
-            // Logout the user temporarily until OTP is verified
-            $this->guard()->logout();
-            
-            // Automatically send email OTP without asking user to select
-            $authMode = 'email';  // Default to email
-            $otpManager = new \App\Lib\OTPManager();
-            $additionalData = ['after_verified' => 'user.login.otp.complete'];
-            
-            try {
-                $otpManager->newOTP(
-                    $user,
-                    $authMode,
-                    'LOGIN_OTP',
-                    $additionalData
-                );
-                
-                session(['login_auth_mode' => $authMode]);
-                
-                $notify[] = ['success', 'OTP sent to your email successfully'];
-                return to_route('user.login.otp.verify')->withNotify($notify);
-            } catch (\Exception $e) {
-                $notify[] = ['error', $e->getMessage()];
-                return to_route('user.login')->withNotify($notify);
-            }
-        }
-        
-        // Original 2FA check (Google Authenticator only)
+        // Skip login OTP - go directly to user verification and login
         $user->tv = $user->ts == Status::VERIFIED ? Status::UNVERIFIED : Status::VERIFIED;
         $user->save();
         
