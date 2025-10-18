@@ -1,0 +1,331 @@
+═══════════════════════════════════════════════════════════════
+📦 HOSTINGER DATABASE INSTALLATION GUIDE
+═══════════════════════════════════════════════════════════════
+
+Your database credentials:
+- Database: u299375718_db
+- Username: u299375718_user
+- Password: Fishpoder123
+- Host: localhost
+
+
+## OPTION 1: Using SSH Terminal (Recommended)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### Step 1: Find the correct directory
+
+Your files are in the `core` directory. First, let's locate them:
+
+```bash
+# You're currently in the core directory
+pwd
+# Should show: /home/u299375718/public_html/core
+
+# List what's inside
+ls -la
+```
+
+### Step 2: Navigate to the install directory
+
+```bash
+# Go to the root public_html directory
+cd ~/public_html
+
+# Check if install folder exists at root
+ls -la | grep install
+
+# The database.sql is likely in one of these locations:
+# 1. /home/u299375718/public_html/install/database.sql
+# 2. /home/u299375718/public_html/core/public/install/database.sql
+```
+
+### Step 3: Import the database (Try these commands)
+
+**Option A - If install folder is at root:**
+```bash
+cd ~/public_html/install
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db < database.sql
+```
+
+**Option B - If install folder is in core/public:**
+```bash
+cd ~/public_html/core/public/install
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db < database.sql
+```
+
+**Option C - Using full path (Works from anywhere):**
+```bash
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db < ~/public_html/install/database.sql
+```
+
+### Step 4: Verify import
+
+```bash
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db -e "SHOW TABLES;"
+```
+
+Expected output: List of 50+ tables like:
+- admins
+- users
+- deposits
+- withdrawals
+- loans
+- dps
+- fdr
+- transactions
+- etc.
+
+
+## OPTION 2: Using phpMyAdmin (Easier for Beginners)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This is the EASIEST method!
+
+### Step 1: Download database.sql to your computer
+
+From your local project:
+```
+/Users/m2/Desktop/Files-1 3/install/database.sql
+```
+
+### Step 2: Access phpMyAdmin
+
+1. Login to Hostinger Panel: https://hpanel.hostinger.com
+2. Go to: Databases → phpMyAdmin
+3. Or direct link: https://phpmyadmin.hostinger.com
+
+### Step 3: Select your database
+
+1. Click on `u299375718_db` in the left sidebar
+2. If database has tables, click "Drop" to remove them first
+3. Go to "Import" tab at the top
+
+### Step 4: Import the database
+
+1. Click "Choose File" button
+2. Select: `/Users/m2/Desktop/Files-1 3/install/database.sql`
+3. Scroll down and click "Go" button
+4. Wait for import to complete (should take 10-30 seconds)
+
+### Step 5: Verify
+
+1. Check left sidebar - should show 50+ tables
+2. Click on "users" table to verify it has data
+
+
+## OPTION 3: Using File Manager + SQL Import
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### Step 1: Upload database.sql via File Manager
+
+1. Login to Hostinger Panel
+2. Go to: File Manager
+3. Navigate to: public_html/install/
+4. Upload `database.sql` from your computer
+   Location: /Users/m2/Desktop/Files-1 3/install/database.sql
+
+### Step 2: Import via SSH
+
+```bash
+cd ~/public_html/install
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db < database.sql
+```
+
+
+## TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### Error: "No such file or directory"
+
+**Solution:** Find where your files are:
+
+```bash
+# Find database.sql location
+find ~/public_html -name "database.sql" -type f
+
+# This will show the exact path
+```
+
+### Error: "Access denied for user"
+
+**Solution:** Check your database credentials:
+
+```bash
+# Test database connection
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db -e "SELECT 1;"
+
+# If this works, credentials are correct
+```
+
+### Error: "Deprecated program name"
+
+This is just a warning (MariaDB vs MySQL). Use this instead:
+
+```bash
+mariadb -u u299375718_user -p'Fishpoder123' u299375718_db < database.sql
+```
+
+### Database file is too large
+
+If upload fails, try:
+
+```bash
+# Split the import (from SSH)
+cd ~/public_html/install
+
+# Import in chunks
+head -n 5000 database.sql | mysql -u u299375718_user -p'Fishpoder123' u299375718_db
+tail -n +5001 database.sql | mysql -u u299375718_user -p'Fishpoder123' u299375718_db
+```
+
+
+## QUICK COMMAND REFERENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+```bash
+# Find your current location
+pwd
+
+# List all files
+ls -la
+
+# Find database.sql
+find ~/public_html -name "database.sql"
+
+# Go to public_html root
+cd ~/public_html
+
+# Import from install folder (if it exists)
+cd install && mysql -u u299375718_user -p'Fishpoder123' u299375718_db < database.sql
+
+# Import from core/public/install
+cd core/public/install && mysql -u u299375718_user -p'Fishpoder123' u299375718_db < database.sql
+
+# Check tables
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db -e "SHOW TABLES;"
+
+# Count tables
+mysql -u u299375718_user -p'Fishpoder123' u299375718_db -e "SHOW TABLES;" | wc -l
+```
+
+
+## EXPECTED DATABASE STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After successful import, you should have these main tables:
+
+✅ Core Tables:
+- admins
+- users
+- general_settings
+- admin_notifications
+- admin_password_resets
+
+✅ Banking Tables:
+- deposits
+- withdrawals
+- balance_transfers
+- transactions
+
+✅ Product Tables:
+- dps (Deposit Pension Scheme)
+- dps_plans
+- fdr (Fixed Deposit Receipt)
+- fdr_plans
+- loans
+- loan_plans
+- installments
+
+✅ Branch Management:
+- branches
+- branch_staff
+- branch_staff_password_resets
+
+✅ Payment Gateways:
+- gateways
+- gateway_currencies
+
+✅ User Management:
+- user_logins
+- device_tokens
+- beneficiaries
+- other_banks
+
+✅ System Tables:
+- support_tickets
+- support_messages
+- support_attachments
+- notification_logs
+- notification_templates
+- pages
+- frontends
+- languages
+
+✅ Configuration:
+- extensions
+- forms
+- permissions
+- roles
+- api_configurations
+
+
+## AFTER DATABASE IMPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### Step 1: Update .env file
+
+Make sure core/.env has:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=u299375718_db
+DB_USERNAME=u299375718_user
+DB_PASSWORD=Fishpoder123
+```
+
+### Step 2: Clear Laravel cache
+
+```bash
+cd ~/public_html/core
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+```
+
+### Step 3: Set permissions
+
+```bash
+chmod -R 775 ~/public_html/core/bootstrap/cache
+chmod -R 775 ~/public_html/core/storage
+```
+
+### Step 4: Test the application
+
+Visit: https://eastbridgeatlantic.com
+
+Default admin login (from database.sql):
+- URL: https://eastbridgeatlantic.com/admin
+- Email: Check database or use installer to create
+
+
+## MY RECOMMENDATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 **EASIEST METHOD:** Use phpMyAdmin (Option 2)
+
+1. Download database.sql from local project
+2. Open phpMyAdmin from Hostinger panel
+3. Select u299375718_db database
+4. Click Import → Choose File → Select database.sql
+5. Click "Go" and wait
+6. Done! ✅
+
+This avoids all SSH terminal issues and is much simpler!
+
+
+═══════════════════════════════════════════════════════════════
+✅ DATABASE READY TO INSTALL
+Choose Option 2 (phpMyAdmin) for easiest installation!
+═══════════════════════════════════════════════════════════════
