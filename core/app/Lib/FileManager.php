@@ -144,6 +144,9 @@ class FileManager
 	        $thumb = explode('x', $this->thumb);
 	        $manager->read($this->file)->resize($thumb[0], $thumb[1])->save($this->path . '/thumb_' . $this->filename);
 	    }
+	    
+	    // Sync to root assets directory if uploaded to core/public
+	    $this->syncToRootAssets();
 	}
 
 
@@ -154,7 +157,45 @@ class FileManager
     */
 	protected function uploadFile(){
 	    $this->file->move($this->path,$this->filename);
+	    
+	    // Sync to root assets directory if uploaded to core/public
+	    $this->syncToRootAssets();
 	}
+
+    /**
+    * Sync uploaded files from core/public/assets to root assets directory
+    * This ensures files uploaded via admin panel are accessible from both locations
+    *
+    * @return void
+    */
+    protected function syncToRootAssets(){
+        // Check if the upload path is in core/public
+        if (strpos($this->path, 'core/public/assets') !== false) {
+            // Calculate the root assets path
+            $rootPath = str_replace('core/public/assets', 'assets', $this->path);
+            
+            // Create directory if it doesn't exist
+            if (!file_exists($rootPath)) {
+                mkdir($rootPath, 0755, true);
+            }
+            
+            // Copy main file
+            $sourceFile = $this->path . '/' . $this->filename;
+            $destFile = $rootPath . '/' . $this->filename;
+            if (file_exists($sourceFile)) {
+                copy($sourceFile, $destFile);
+            }
+            
+            // Copy thumbnail if exists
+            if ($this->thumb) {
+                $sourceThumb = $this->path . '/thumb_' . $this->filename;
+                $destThumb = $rootPath . '/thumb_' . $this->filename;
+                if (file_exists($sourceThumb)) {
+                    copy($sourceThumb, $destThumb);
+                }
+            }
+        }
+    }
 
     /**
     * Make directory doesn't exists
