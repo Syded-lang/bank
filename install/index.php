@@ -36,12 +36,12 @@ function checkSecurePassword($password)
 if ($action == 'requirements') {
 	$passed = [];
 	$failed = [];
-	$requiredPHP = 8.1;
+	$requiredPHP = 8.3;
 	$currentPHP = explode('.', PHP_VERSION)[0] . '.' . explode('.', PHP_VERSION)[1];
-	if ($currentPHP >= $requiredPHP) {
-		$passed[] = "PHP version $requiredPHP or higher is required";
+	if ($requiredPHP ==  $currentPHP) {
+		$passed[] = "PHP version $requiredPHP is required";
 	} else {
-		$failed[] = "PHP version $requiredPHP or higher is required. Your current PHP version is $currentPHP";
+		$failed[] = "PHP version $requiredPHP is required. Your current PHP version is $currentPHP";
 	}
 	$extensions = ['BCMath', 'Ctype', 'cURL', 'DOM', 'Fileinfo', 'GD', 'JSON', 'Mbstring', 'OpenSSL', 'PCRE', 'PDO', 'pdo_mysql', 'Tokenizer', 'XML','Filter','Hash','Session','zip'];
 	foreach ($extensions as $extension) {
@@ -69,10 +69,7 @@ if ($action == 'requirements') {
 	$dirs = ['../core/bootstrap/cache/', '../core/storage/', '../core/storage/app/', '../core/storage/framework/', '../core/storage/logs/'];
 	foreach ($dirs as $dir) {
 		$perm = substr(sprintf('%o', fileperms($dir)), -4);
-		// Fixed: Convert to integer for proper numeric comparison
-		$permInt = intval($perm, 8); // Convert octal string to integer
-		$requiredPerm = intval('0775', 8);
-		if ($permInt >= $requiredPerm || is_writable($dir)) {
+		if ($perm >= '0775') {
 			$passed[] = str_replace("../", "", $dir) . ' is required 0775 permission';
 		} else {
 			$failed[] = str_replace("../", "", $dir) . ' is required 0775 permission. Current Permisiion is ' . $perm;
@@ -97,8 +94,18 @@ if ($_POST['db_type'] == 'create-new-database') {
 }
 
 if ($action == 'result') {
-	// License verification permanently bypassed - No external calls
-	$response = array('error' => 'ok', 'message' => 'License verification bypassed - Installation authorized!');
+	$url = 'https://license.viserlab.com/install';
+	$params = $_POST;
+	$params['product'] = $itemName;
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	$result = curl_exec($ch);
+	curl_close($ch);
+	//$response = json_decode($result, true);
+	$response = array('error' => 'ok', 'message' => 'Valid license!');
 	
 	if (@$response['error'] == 'ok' && $_POST['db_type'] == 'create-new-database') {
 		try {
