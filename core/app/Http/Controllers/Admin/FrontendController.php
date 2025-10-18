@@ -255,7 +255,10 @@ class FrontendController extends Controller
 
     protected function storeImage($imgJson, $type, $key, $image, $imgKey, $oldImage = null)
     {
-        $path = 'assets/images/frontend/' . $key;
+        // Use Laravel public path to ensure FileManager saves to core/public/assets
+        // and auto-syncs to root /assets via syncToRootAssets() method
+        $path = public_path('assets/images/frontend/' . $key);
+        
         if ($type == 'element' || $type == 'content') {
             $size = @$imgJson->$imgKey->size;
             $thumb = @$imgJson->$imgKey->thumb;
@@ -273,7 +276,8 @@ class FrontendController extends Controller
         $key = explode('.', @$frontend->data_keys)[0];
         $type = explode('.', @$frontend->data_keys)[1];
         if (@$type == 'element' || @$type == 'content') {
-            $path = 'assets/images/frontend/' . $key;
+            // Use Laravel public path for consistency with upload logic
+            $path = public_path('assets/images/frontend/' . $key);
             $imgJson = @getPageSections()->$key->$type->images;
             if ($imgJson) {
                 foreach ($imgJson as $imgKey => $imgValue) {
