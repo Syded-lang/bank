@@ -305,7 +305,8 @@ PUSHER_APP_CLUSTER=mt1
 
 MIX_PUSHER_APP_KEY='{$PUSHER_APP_KEY}'
 MIX_PUSHER_APP_CLUSTER='{$PUSHER_APP_CLUSTER}'";
-			$envpath = dirname(__DIR__, 1) . '/core/.env';
+			// Fixed: Correct path - go up 2 levels from core/public/install/ to reach core/
+			$envpath = dirname(__DIR__, 2) . '/.env';
 			file_put_contents($envpath, $envcontent);
 		} catch (Exception $e) {
 			$response['error'] = 'error';
