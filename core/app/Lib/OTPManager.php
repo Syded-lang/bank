@@ -61,7 +61,7 @@ class OTPManager
         $this->additionalData = $additionalData;
 
         $otpVerification                  = new OtpVerification();
-        $otpVerification->user_id         = auth()->id();
+        $otpVerification->user_id         = auth()->id() ?? $parent->id;
         $otpVerification->send_via        = $sendVia;
         $otpVerification->notify_template = $notifyTemplate;
         $otpVerification->additional_data = $additionalData;
