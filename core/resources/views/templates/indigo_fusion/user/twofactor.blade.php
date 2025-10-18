@@ -1,63 +1,28 @@
 @extends($activeTemplate . 'layouts.master')
 @section('content')
     <div class="row justify-content-center gy-4">
-        {{-- 2FA Method Selection Card --}}
+        {{-- 2FA Information Card --}}
         <div class="col-md-12">
             <div class="card custom--card">
                 <div class="card-body">
-                    <h5 class="card-title mb-3">@lang('Two-Factor Authentication Settings')</h5>
-                    <p class="mb-3">@lang('Choose your preferred method for two-factor authentication when making transfers and important actions.')</p>
+                    <h5 class="card-title mb-3">@lang('Two-Factor Authentication')</h5>
                     
-                    <form action="{{ route('user.twofactor.method.update') }}" method="POST">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">@lang('Preferred 2FA Method')</label>
-                                    <select name="preferred_2fa_method" class="form--control" required>
-                                        @if (gs()->modules->otp_email)
-                                            <option value="email" @selected(auth()->user()->preferred_2fa_method == 'email' || !auth()->user()->preferred_2fa_method)>
-                                                @lang('Email OTP (Recommended)')
-                                            </option>
-                                        @endif
-                                        @if (auth()->user()->ts)
-                                            <option value="google" @selected(auth()->user()->preferred_2fa_method == 'google')>
-                                                @lang('Google Authenticator')
-                                            </option>
-                                        @endif
-                                        @if (gs()->modules->otp_sms)
-                                            <option value="sms" @selected(auth()->user()->preferred_2fa_method == 'sms')>
-                                                @lang('SMS OTP')
-                                            </option>
-                                        @endif
-                                    </select>
-                                    <small class="text-muted d-block mt-2">
-                                        @if (auth()->user()->preferred_2fa_method == 'google')
-                                            <i class="las la-check-circle text-success"></i> @lang('Currently using: Google Authenticator')
-                                        @elseif (auth()->user()->preferred_2fa_method == 'sms')
-                                            <i class="las la-check-circle text-success"></i> @lang('Currently using: SMS OTP')
-                                        @else
-                                            <i class="las la-check-circle text-success"></i> @lang('Currently using: Email OTP')
-                                        @endif
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="col-md-6 d-flex align-items-end">
-                                <button type="submit" class="btn btn-md btn--base">@lang('Update Preference')</button>
-                            </div>
-                        </div>
-                    </form>
+                    <div class="alert alert-success" role="alert">
+                        <i class="las la-shield-alt"></i>
+                        <strong>@lang('Security Status:')</strong> 
+                        @if (gs()->modules->otp_email)
+                            @lang('Email OTP is enabled for all transfers and important actions.')
+                        @else
+                            @lang('Two-factor authentication is currently disabled by admin.')
+                        @endif
+                    </div>
                     
-                    <div class="alert alert-info mt-3" role="alert">
+                    <div class="alert alert-info" role="alert">
                         <i class="las la-info-circle"></i>
                         <strong>@lang('How it works:')</strong> 
-                        <ul class="mb-0 mt-2">
-                            <li><strong>@lang('Email OTP:')</strong> @lang('Verification codes sent to your email address. Works automatically.')</li>
-                            @if (gs()->modules->otp_sms)
-                                <li><strong>@lang('SMS OTP:')</strong> @lang('Verification codes sent to your phone via SMS. Works automatically.')</li>
-                            @endif
-                            <li><strong>@lang('Google Authenticator:')</strong> @lang('Time-based codes from the Google Authenticator app. Must be enabled below first.')</li>
-                        </ul>
+                        <p class="mb-2 mt-2">@lang('When you make transfers or perform important actions, a verification code will be sent to your email address. Simply enter the code to confirm your action.')</p>
+                        
+                        <p class="mb-0"><strong>@lang('Optional:')</strong> @lang('You can also enable Google Authenticator below for additional security using time-based codes from the Google Authenticator mobile app.')</p>
                     </div>
                 </div>
             </div>
