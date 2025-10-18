@@ -142,7 +142,12 @@ class OTPManager
         if ($this->sendVia != '2fa') {
             $verification = $this->verification;
             $shortCodes   = ['otp' => $this->verification->otp];
-            notify($this->parent, $verification->notify_template, $shortCodes, [$verification->send_via], false);
+            
+            // OTP should always be sent to the authenticated user making the request
+            // The $parent object (Beneficiary, Plan, Operator, etc.) doesn't have email
+            $recipient = auth()->user();
+            
+            notify($recipient, $verification->notify_template, $shortCodes, [$verification->send_via], false);
         }
     }
 
