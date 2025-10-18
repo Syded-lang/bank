@@ -180,4 +180,9 @@ class User extends Authenticatable
         return $this->hasMany(DeviceToken::class);
     }
 
+    public function verifications()
+    {
+        return $this->morphMany(OtpVerification::class, 'parent', 'parent_type', 'user_id');
+    }
+
 }
