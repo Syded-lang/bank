@@ -28,15 +28,23 @@
                                 @csrf
                                 
                                 <div class="mb-4">
-                                    <div class="verification-code">
-                                        <input type="text" name="otp" id="verification-code" class="form--control overflow-hidden" required autocomplete="off" maxlength="6" autofocus placeholder="000000">
-                                        <div class="boxes">
-                                            <span>-</span>
-                                            <span>-</span>
-                                            <span>-</span>
-                                            <span>-</span>
-                                            <span>-</span>
-                                            <span>-</span>
+                                    <div class="verification-code-wrapper">
+                                        <input type="text" 
+                                               name="otp" 
+                                               id="verification-code" 
+                                               class="verification-input" 
+                                               required 
+                                               autocomplete="off" 
+                                               maxlength="6" 
+                                               autofocus 
+                                               inputmode="numeric">
+                                        <div class="boxes" id="otp-boxes">
+                                            <span class="box">-</span>
+                                            <span class="box">-</span>
+                                            <span class="box">-</span>
+                                            <span class="box">-</span>
+                                            <span class="box">-</span>
+                                            <span class="box">-</span>
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +70,6 @@
 @endsection
 
 @push('style')
-    <link rel="stylesheet" href="{{ asset('assets/global/css/verification-code.css') }}">
     <style>
         .otp-icon {
             animation: pulse 2s ease-in-out infinite;
@@ -79,59 +86,51 @@
             }
         }
         
-        .verification-code {
+        .verification-code-wrapper {
             position: relative;
             margin: 0 auto;
-            max-width: 400px;
+            max-width: 450px;
+            height: 70px;
         }
         
-        .verification-code input {
-            font-size: 24px;
-            letter-spacing: 42px;
-            text-align: center;
-            font-weight: 600;
-            padding: 15px;
-            color: transparent;
-            caret-color: #2b388f;
-            text-shadow: 0 0 0 transparent;
-        }
-        
-        .verification-code input::selection {
-            background: transparent;
+        .verification-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            z-index: 2;
+            cursor: pointer;
         }
         
         .boxes {
             display: flex;
-            justify-content: space-around;
-            gap: 10px;
-            pointer-events: none;
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            transform: translateY(-50%);
-            padding: 0 20px;
+            justify-content: space-between;
+            gap: 8px;
+            height: 100%;
+            z-index: 1;
         }
         
-        .boxes span {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2b388f;
-            width: 50px;
-            height: 50px;
+        .box {
+            flex: 1;
+            max-width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 3px solid #2b388f;
-        }
-        
-        #resend-otp {
-            font-size: 14px;
+            font-size: 32px;
+            font-weight: 700;
+            color: #2b388f;
+            background: white;
+            border: 2px solid #d0d5dd;
+            border-radius: 8px;
             transition: all 0.3s;
         }
         
-        #resend-otp:hover {
-            transform: scale(1.05);
+        .box.filled {
+            border-color: #2b388f;
+            background: #f8f9ff;
         }
         
         #submit-btn {
@@ -147,40 +146,55 @@
         (function($) {
             "use strict";
             
+            var input = $('#verification-code');
+            var boxes = $('.box');
+            
             // Auto-focus on input
-            $('#verification-code').focus();
+            input.focus();
             
             // Handle OTP input
-            $('#verification-code').on('input', function() {
-                $(this).val(function(i, val) {
-                    // Auto-submit when 6 digits entered
-                    if (val.length >= 6) {
-                        $('#submit-btn').html('<i class="las la-spinner fa-spin"></i> @lang("Verifying...")');
-                        setTimeout(function() {
-                            $('.submit-form').submit();
-                        }, 300);
-                    }
-                    // Limit to 6 digits
-                    if (val.length > 6) {
-                        return val.substring(0, 6);
-                    }
-                    return val;
-                });
+            input.on('input', function() {
+                var value = $(this).val().replace(/[^0-9]/g, ''); // Only numbers
+                
+                // Limit to 6 digits
+                if (value.length > 6) {
+                    value = value.substring(0, 6);
+                }
+                $(this).val(value);
                 
                 // Update visual boxes
-                $('.boxes span').text('-');
-                for (var i = 0; i < this.value.length; i++) {
-                    $('.boxes span').eq(i).text('●');
+                boxes.each(function(index) {
+                    if (index < value.length) {
+                        $(this).text('●').addClass('filled');
+                    } else {
+                        $(this).text('-').removeClass('filled');
+                    }
+                });
+                
+                // Auto-submit when 6 digits entered
+                if (value.length === 6) {
+                    $('#submit-btn').html('<i class="las la-spinner fa-spin"></i> @lang("Verifying...")');
+                    setTimeout(function() {
+                        $('.submit-form').submit();
+                    }, 300);
                 }
             });
             
             // Only allow numbers
-            $('#verification-code').on('keypress', function(e) {
+            input.on('keypress', function(e) {
                 var charCode = (e.which) ? e.which : e.keyCode;
                 if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                     return false;
                 }
                 return true;
+            });
+            
+            // Prevent paste of non-numeric content
+            input.on('paste', function(e) {
+                setTimeout(function() {
+                    var value = input.val().replace(/[^0-9]/g, '');
+                    input.val(value).trigger('input');
+                }, 10);
             });
             
         })(jQuery);
