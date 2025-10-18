@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
+!vendor/laramin
 .env
 .env.backup
 .env.production

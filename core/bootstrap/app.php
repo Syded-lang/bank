@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         using: function () {
-            Route::namespace('App\Http\Controllers')->middleware([VugiChugi::mdNm()])->group(function () {
+            Route::namespace('App\Http\Controllers')->group(function () {
                 Route::prefix('api')
                     ->middleware(['api', 'maintenance'])
                     ->group(base_path('routes/api.php'));
