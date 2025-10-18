@@ -215,7 +215,9 @@ function getPageSections($arr = false)
 function getImage($image, $size = null, $avatar = false)
 {
     $clean = '';
-    if (file_exists($image) && is_file($image)) {
+    // Check if file exists using public_path for proper file system check
+    $imagePath = public_path($image);
+    if (file_exists($imagePath) && is_file($imagePath)) {
         return asset($image) . $clean;
     }
     if ($size) {
