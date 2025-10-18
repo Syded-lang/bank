@@ -113,8 +113,27 @@ class LoginController extends Controller
             // Logout the user temporarily until OTP is verified
             $this->guard()->logout();
             
-            // Redirect to login OTP selection page
-            return to_route('user.login.otp.select');
+            // Automatically send email OTP without asking user to select
+            $authMode = 'email';  // Default to email
+            $otpManager = new \App\Lib\OTPManager();
+            $additionalData = ['after_verified' => 'user.login.otp.complete'];
+            
+            try {
+                $otpManager->newOTP(
+                    $user,
+                    $authMode,
+                    'LOGIN_OTP',
+                    $additionalData
+                );
+                
+                session(['login_auth_mode' => $authMode]);
+                
+                $notify[] = ['success', 'OTP sent to your email successfully'];
+                return to_route('user.login.otp.verify')->withNotify($notify);
+            } catch (\Exception $e) {
+                $notify[] = ['error', $e->getMessage()];
+                return to_route('user.login')->withNotify($notify);
+            }
         }
         
         // Original 2FA check (Google Authenticator only)
