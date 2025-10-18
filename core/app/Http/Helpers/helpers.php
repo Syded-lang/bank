@@ -298,6 +298,12 @@ function menuActive($routeName, $type = null, $param = null)
 
 function fileUploader($file, $location, $size = null, $old = null, $thumb = null, $filename = null)
 {
+    // Convert relative path to absolute path for file operations
+    // If location doesn't start with '/', prepend public_path()
+    if (strpos($location, '/') !== 0) {
+        $location = public_path($location);
+    }
+    
     $fileManager = new FileManager($file);
     $fileManager->path = $location;
     $fileManager->size = $size;
@@ -315,7 +321,16 @@ function fileManager()
 
 function getFilePath($key)
 {
-    return fileManager()->$key()->path;
+    $path = fileManager()->$key()->path;
+    
+    // If path is absolute (starts with public_path), return as-is for file operations
+    // This is used by fileUploader() for saving files
+    if (strpos($path, public_path('')) === 0) {
+        return $path;
+    }
+    
+    // Otherwise return as-is (legacy relative paths)
+    return $path;
 }
 
 function getFileSize($key)
@@ -326,6 +341,22 @@ function getFileSize($key)
 function getFileExt($key)
 {
     return fileManager()->$key()->extensions;
+}
+
+/**
+ * Get relative image path for display in templates
+ * Strips the absolute path prefix to return web-accessible relative path
+ * 
+ * @param string $key The file type key (e.g., 'logoIcon', 'seo', 'gateway')
+ * @return string Relative path like 'assets/images/logoIcon'
+ */
+function getImagePath($key)
+{
+    $absolutePath = fileManager()->$key()->path;
+    // Remove the absolute path prefix to get relative path
+    // Example: /home/.../public_html/core/public/assets/images/logoIcon -> assets/images/logoIcon
+    $relativePath = str_replace(public_path(''), '', $absolutePath);
+    return ltrim($relativePath, '/');
 }
 
 function diffForHumans($date)
