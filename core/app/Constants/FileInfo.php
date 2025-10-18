@@ -18,76 +18,78 @@ class FileInfo
 
     public function fileInfo()
     {
+        // Use public_path() for all paths to ensure files upload to core/public/assets
+        // Then FileManager's syncToRootAssets() auto-copies to root /assets directory
         $data['withdrawVerify'] = [
-            'path' => 'assets/images/verify/withdraw'
+            'path' => public_path('assets/images/verify/withdraw')
         ];
         $data['depositVerify'] = [
-            'path'      => 'assets/images/verify/deposit'
+            'path'      => public_path('assets/images/verify/deposit')
         ];
         $data['verify'] = [
-            'path'      => 'assets/verify'
+            'path'      => public_path('assets/verify')
         ];
         $data['default'] = [
-            'path'      => 'assets/images/default.png',
+            'path'      => public_path('assets/images/default.png'),
         ];
         $data['withdrawMethod'] = [
-            'path'      => 'assets/images/withdraw/method',
+            'path'      => public_path('assets/images/withdraw/method'),
             'size' => ''
         ];
         $data['ticket'] = [
-            'path'      => 'assets/support',
+            'path'      => public_path('assets/support'),
         ];
         $data['logoIcon'] = [
-            'path'      => 'assets/images/logoIcon',
+            'path'      => public_path('assets/images/logoIcon'),
         ];
         $data['favicon'] = [
             'size'      => '128x128',
         ];
         $data['extensions'] = [
-            'path'      => 'assets/images/extensions',
+            'path'      => public_path('assets/images/extensions'),
             'size'      => '36x36',
         ];
         $data['seo'] = [
-            'path'      => 'assets/images/seo',
+            'path'      => public_path('assets/images/seo'),
             'size'      => '1180x600',
         ];
         $data['userProfile'] = [
-            'path'      => 'assets/images/user/profile',
+            'path'      => public_path('assets/images/user/profile'),
             'size'      => '350x300',
         ];
         $data['adminProfile'] = [
-            'path'      => 'assets/admin/images/profile',
+            'path'      => public_path('assets/admin/images/profile'),
             'size'      => '400x400',
         ];
         $data['push'] = [
-            'path'      => 'assets/images/push_notification',
+            'path'      => public_path('assets/images/push_notification'),
         ];
         $data['appPurchase'] = [
-            'path'      => 'assets/in_app_purchase_config',
+            'path'      => public_path('assets/in_app_purchase_config'),
         ];
         $data['maintenance'] = [
-            'path'      => 'assets/images/maintenance',
+            'path'      => public_path('assets/images/maintenance'),
             'size'      => '660x325',
         ];
         $data['language'] = [
-            'path' => 'assets/images/language',
+            'path' => public_path('assets/images/language'),
             'size' => '50x50'
         ];
         $data['gateway'] = [
-            'path' => 'assets/images/gateway',
+            'path' => public_path('assets/images/gateway'),
             'size' => ''
         ];
         $data['pushConfig'] = [
-            'path'      => 'assets/admin',
+            'path'      => public_path('assets/admin'),
         ];
         $data['beneficiaryTransfer'] = [
-            'path' => 'assets/images/user/transfer/beneficiary'
+            'path' => public_path('assets/images/user/transfer/beneficiary')
         ];
         $data['branchStaff'] = [
-            'path' => 'assets/branch/staff/resume'
+            'path' => public_path('assets/branch/staff/resume')
         ];
         $data['branchStaffProfile'] = [
-            'path'      => 'assets/branch/staff/images/profile',
+            'path'      => public_path('assets/branch/staff/images/profile'),
             'size'      => '400x400',
         ];
 
