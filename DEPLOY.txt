@@ -1,0 +1,21 @@
+HOSTINGER DEPLOYMENT - QUICK COMMANDS
+═══════════════════════════════════════════════════════════════
+
+SSH TO HOSTINGER:
+ssh u299375718@eastbridgeatlantic.com -p 65002
+Password: Fishpoder123
+
+AUTOMATED DEPLOYMENT:
+cd ~/public_html
+wget https://raw.githubusercontent.com/Syded-lang/bank/main/deploy-hostinger.sh
+bash deploy-hostinger.sh
+
+THEN IMPORT DATABASE:
+- Go to: https://eastbridgeatlantic.com:2083
+- phpMyAdmin → Import → ~/public_html/install/database.sql
+
+VISIT SITE:
+https://eastbridgeatlantic.com
+https://eastbridgeatlantic.com/admin
+
+═══════════════════════════════════════════════════════════════
