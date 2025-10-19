@@ -703,4 +703,45 @@ class ManageUsersController extends Controller
             'html'    => $html,
         ]);
     }
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Prevent deletion of the first admin user or currently logged-in admin
+        if ($user->id == 1 || $user->id == Auth::guard('admin')->id()) {
+            $notify[] = ['error', 'Cannot delete this account'];
+            return back()->withNotify($notify);
+        }
+
+        // Start transaction to ensure data integrity
+        DB::beginTransaction();
+        
+        try {
+            // Delete related records
+            $user->loginLogs()->delete();
+            $user->transactions()->delete();
+            $user->deposits()->delete();
+            $user->withdrawals()->delete();
+            $user->beneficiaries()->delete();
+            $user->beneficiaryOf()->delete();
+            $user->fdrs()->delete();
+            $user->dpses()->delete();
+            $user->loans()->delete();
+            $user->notificationLogs()->delete();
+            $user->balanceTransfers()->delete();
+            
+            // Delete the user
+            $user->delete();
+            
+            DB::commit();
+            
+            $notify[] = ['success', 'User account and all related data deleted successfully'];
+            return redirect()->route('admin.users.all')->withNotify($notify);
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notify[] = ['error', 'Failed to delete user account: ' . $e->getMessage()];
+            return back()->withNotify($notify);
+        }
+    }
 }

@@ -92,6 +92,14 @@
                         @endif
                     </div>
                 @endcan
+
+                @can('admin.users.delete')
+                    <div class="flex-fill">
+                        <button type="button" class="btn btn--danger btn--shadow w-100 btn-lg confirmationBtn" data-question="Are you sure you want to permanently delete this user account and all related data?" data-action="{{ route('admin.users.delete', $user->id) }}">
+                            <i class="las la-trash"></i>@lang('Delete Account')
+                        </button>
+                    </div>
+                @endcan
             </div>
         </div>
 

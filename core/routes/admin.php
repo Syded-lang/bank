@@ -86,6 +86,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('notification-log/{id}', 'notificationLog')->name('notification.log');
         Route::get('beneficiaries/{id}', 'beneficiaries')->name('beneficiaries');
         Route::get('beneficiary/details/{id}', 'beneficiaryDetails')->name('beneficiary.details');
+        Route::post('delete/{id}', 'destroy')->name('delete');
 
     });
 
