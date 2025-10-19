@@ -18,7 +18,7 @@
                                     <p class="text-muted">@lang('Enter the 6-digit code from your Google Authenticator app')</p>
                                 @elseif ($authMode == 'email')
                                     <p class="text-muted">@lang('Enter the 6-digit code sent to your email')</p>
-                                    <p class="text-muted small"><i class="las la-envelope"></i> {{ substr(auth()->user()->email ?? 's*****@***.com', 0, 2) . '*****' . substr(auth()->user()->email ?? '', -10) }}</p>
+                                    <p class="text-muted small"><i class="las la-envelope"></i> {{ substr($user->email ?? 's*****@***.com', 0, 2) . '*****' . substr($user->email ?? '', -10) }}</p>
                                 @else
                                     <p class="text-muted">@lang('Enter the 6-digit code sent to your phone')</p>
                                 @endif
