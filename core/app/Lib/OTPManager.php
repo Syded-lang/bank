@@ -145,7 +145,7 @@ class OTPManager
             
             // OTP should always be sent to the authenticated user making the request
             // The $parent object (Beneficiary, Plan, Operator, etc.) doesn't have email
-            $recipient = auth()->user();
+            $recipient = $this->parent ?? auth()->user();
             
             notify($recipient, $verification->notify_template, $shortCodes, [$verification->send_via], false);
         }
